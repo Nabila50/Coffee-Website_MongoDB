@@ -11,17 +11,27 @@ const SignUp = () => {
     const form = e.target;
     const formData = new FormData(form);
 
-    const { email, password, ...userProfile } = Object.fromEntries(
+    const { email, password, ...restFormData } = Object.fromEntries(
       formData.entries()
     );
-    console.log(email, password, userProfile);
+
+
     // const email = formData.get('email');
     // const password = formData.get('password');
 
     // Create user in the firebase
     createUser(email, password)
       .then((result) => {
-        console.log(result);
+        console.log(result.user);
+
+        const userProfile = {
+          email,
+          ...restFormData,
+          creationTime : result.user?.metadata?.creationTime,
+          lastSignInTime : result.user?.metadata?.lastSignInTime,
+
+
+        }
         // save the profile info in the Database
 
         fetch("http://localhost:3000/users", {
@@ -37,7 +47,7 @@ const SignUp = () => {
               Swal.fire({
                
                 icon: "success",
-                title: "Your Account Is Created",git init
+                title: "Your Account Is Created",
                 showConfirmButton: false,
                 timer: 1500,
               });
